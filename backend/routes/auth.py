@@ -22,3 +22,15 @@ def login():
         return jsonify({'msg': 'Invalid credentials'}), 401
     access_token = create_access_token(identity=str(user.id))
     return jsonify(access_token=access_token)
+
+@auth.route('/get_user', methods=['GET'])
+def get_user():
+    users = User.objects()
+    user_list = []
+    for user in users:
+        user_list.append({
+            "id": str(user.id),
+            "username": user.username
+            # เพิ่ม field อื่นๆ ถ้าต้องการ
+        })
+    return jsonify(user_list), 200

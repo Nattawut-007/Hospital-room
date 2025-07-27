@@ -50,3 +50,29 @@ def delete_medicine(id):
         return jsonify({'error': 'Medicine not found'}), 404
     medicine.delete()
     return jsonify({'msg': 'Medicine deleted'})
+
+# ✅ ค้นหายาด้วยชื่อหรือยี่ห้อ
+@medicines.route('/medicines/search', methods=['GET'])
+@jwt_required()
+def search_medicines():
+    query = request.args.get('q', '')
+    if not query:
+        return jsonify({'error': 'Query parameter "q" is required'}), 400
+    results = Medicine.objects.filter(
+        __raw__={
+            "$or": [
+                {"name": {"$regex": query, "$options": "i"}},
+                {"brand": {"$regex": query, "$options": "i"}}
+            ]
+        }
+    )
+    return jsonify([
+        {
+            "name": m.name,
+            "brand": m.brand,
+            "stock": m.stock
+        }
+        for m in results
+    ])
+
+#
