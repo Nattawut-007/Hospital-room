@@ -4,6 +4,9 @@
     <div class="space-x-4">
       <NuxtLink to="/login">Login</NuxtLink>
       <NuxtLink to="/dashboard">Dashboard</NuxtLink>
+      <NuxtLink to="/medicine">medicine</NuxtLink>
+      <NuxtLink to="/student">student</NuxtLink>
+      <NuxtLink to="/treatment">treatment</NuxtLink>
     </div>
   </nav>
 </template>
