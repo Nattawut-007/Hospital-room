@@ -8,6 +8,7 @@
     </div>
 
     <div class="space-x-4">
+<<<<<<< HEAD
       <NuxtLink
         to="/login"
         class="text-gray-600 hover:text-emerald-600 font-medium transition duration-200"
@@ -32,6 +33,11 @@
         to="/treatment"
         class="text-gray-600 hover:text-emerald-600 font-medium transition duration-200"
       >การรักษา</NuxtLink>
+=======
+      <NuxtLink to="/login">Login</NuxtLink>
+      <NuxtLink to="/Dashboard">Dashboard</NuxtLink>
+      <NuxtLink to="/students">studens</NuxtLink>
+>>>>>>> 494269c (students)
     </div>
   </nav>
 </template>
