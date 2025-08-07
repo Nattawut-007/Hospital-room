@@ -8,7 +8,10 @@
       <h1 class="text-3xl font-bold text-center text-emerald-700 mb-2">Nurse Station</h1>
       <p class="text-center text-sm text-gray-500 mb-6">ระบบดูแลสุขภาพนักเรียน</p>
 
-      <div class="mb-4">
+      <div class="mb-4">     <!-- Show API URL -->
+      <p class="text-sm text-gray-500 text-center mb-2">
+        API URL: {{ apiUrl }}
+      </p>
         <label class="block text-gray-700 font-medium mb-1" for="username">ชื่อผู้ใช้</label>
         <input
           id="username"
@@ -57,12 +60,13 @@ import { useRouter } from 'vue-router'
 const username = ref('')
 const password = ref('')
 const errorMsg = ref('')
+const apiUrl = import.meta.env.VITE_API_URL
 const router = useRouter()
 
 const handleLogin = async () => {
   errorMsg.value = ''
   try {
-    const res = await axios.post('http://localhost:5000/api/login', {
+    const res = await axios.post(`${apiUrl}/api/login`, {
       username: username.value,
       password: password.value
     })

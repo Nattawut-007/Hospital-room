@@ -1,0 +1,23 @@
+FROM node:20
+
+WORKDIR /app
+
+# Build-time environment variable
+ARG VITE_API_URL
+ENV VITE_API_URL=$VITE_API_URL
+
+# สร้างไฟล์ .env โดยใช้ ARG
+RUN echo "VITE_API_URL=$VITE_API_URL" > .env
+
+# ติดตั้ง dependencies
+COPY package*.json ./
+RUN npm install
+
+# คัดลอกไฟล์โปรเจกต์
+COPY . .
+
+# Build Nuxt project (จะอ่านค่า .env ที่เราสร้าง)
+RUN npm run build
+
+EXPOSE 3000
+CMD ["npm", "run", "dev"]

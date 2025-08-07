@@ -80,63 +80,113 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import axios from 'axios'
 
-const form = ref({
-  name: '',
-  type: '',
-  quantity: ''
-})
-
+const form = ref({ name: '', type: '', quantity: '' })
 const medicineList = ref([])
-const searchQuery = ref('') // ✅ ตัวแปรเก็บคำค้นหา
+const searchQuery = ref('')
 const isEditing = ref(false)
-const editIndex = ref(null)
+const editId = ref(null)
 const message = ref('')
 
-// ✅ computed สำหรับกรองข้อมูลยา
+// ✅ ใส่ URL API ของคุณ (เช่น http://localhost:5000)
+const apiUrl = import.meta.env.VITE_API_URL
+
+// ✅ เพิ่ม token หากใช้ JWT (ใส่ logic รับ token ตามระบบ auth ของคุณ)
+const token = localStorage.getItem('token') // สมมุติว่าเก็บ token ไว้ใน localStorage
+
+const axiosInstance = axios.create({
+  baseURL: apiUrl,
+  headers: {
+    Authorization: `Bearer ${token}`
+  }
+})
+
+// ✅ โหลดข้อมูลยาเมื่อ component ทำงาน
+onMounted(() => {
+  fetchMedicines()
+})
+
+const fetchMedicines = async () => {
+  try {
+    const res = await axiosInstance.get('/api/medicines')
+    medicineList.value = res.data
+  } catch (err) {
+    console.error('Error fetching medicines:', err)
+    message.value = 'ไม่สามารถโหลดข้อมูลยาได้'
+  }
+}
+
+// ✅ ค้นหายา
 const filteredMedicine = computed(() =>
   medicineList.value.filter(m =>
-    m.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-    m.type.toLowerCase().includes(searchQuery.value.toLowerCase())
+    m.name?.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+    m.type?.toLowerCase().includes(searchQuery.value.toLowerCase())
   )
 )
 
-const addMedicine = () => {
+// ✅ เพิ่มยา
+const addMedicine = async () => {
   if (form.value.name && form.value.type && form.value.quantity) {
-    medicineList.value.push({ ...form.value })
-    resetForm()
-    message.value = 'เพิ่มข้อมูลยาสำเร็จแล้ว'
+    try {
+      const res = await axiosInstance.post('/api/medicines', form.value)
+      medicineList.value.push(res.data)
+      message.value = 'เพิ่มข้อมูลยาสำเร็จแล้ว'
+      resetForm()
+    } catch (err) {
+      console.error('Error adding medicine:', err)
+      message.value = 'ไม่สามารถเพิ่มข้อมูลยาได้'
+    }
   } else {
     message.value = 'กรุณากรอกข้อมูลให้ครบ'
   }
 }
 
+// ✅ แก้ไข
 const editMedicine = (index) => {
-  form.value = { ...medicineList.value[index] }
+  const m = filteredMedicine.value[index]
+  form.value = {
+    name: m.name,
+    type: m.type,
+    quantity: m.quantity
+  }
+  editId.value = m._id // ใช้ _id จาก MongoDB
   isEditing.value = true
-  editIndex.value = index
   message.value = ''
 }
 
-const updateMedicine = () => {
-  if (editIndex.value !== null) {
-    medicineList.value[editIndex.value] = { ...form.value }
+// ✅ อัปเดตยา
+const updateMedicine = async () => {
+  if (!editId.value) return
+  try {
+    await axiosInstance.put(`/api/medicines/${editId.value}`, form.value)
+    await fetchMedicines()
     message.value = 'อัปเดตข้อมูลยาสำเร็จแล้ว'
     resetForm()
+  } catch (err) {
+    console.error('Error updating medicine:', err)
+    message.value = 'ไม่สามารถอัปเดตข้อมูลยาได้'
   }
 }
 
-const deleteMedicine = (index) => {
-  medicineList.value.splice(index, 1)
-  message.value = 'ลบข้อมูลยาแล้ว'
-  resetForm()
+// ✅ ลบยา
+const deleteMedicine = async (index) => {
+  const m = filteredMedicine.value[index]
+  try {
+    await axiosInstance.delete(`/api/medicines/${m._id}`)
+    await fetchMedicines()
+    message.value = 'ลบข้อมูลยาแล้ว'
+  } catch (err) {
+    console.error('Error deleting medicine:', err)
+    message.value = 'ไม่สามารถลบข้อมูลยาได้'
+  }
 }
 
 const resetForm = () => {
   form.value = { name: '', type: '', quantity: '' }
   isEditing.value = false
-  editIndex.value = null
+  editId.value = null
 }
 </script>
 
