@@ -3,8 +3,16 @@
     <div class="max-w-5xl mx-auto">
       <h1 class="text-4xl font-bold text-center text-emerald-700 mb-10">🏥 Hospital Dashboard</h1>
 
-      <!-- Add Button -->
-      <div class="text-right mb-4">
+      <!-- Add Button + Search -->
+      <div class="flex justify-end items-center mb-4">
+        <!-- ✅ ช่องค้นหา -->
+        <input
+          v-model="searchQuery"
+          type="text"
+          placeholder="ค้นหา..."
+          class="border border-gray-300 rounded-lg px-3 py-2 mr-2"
+        />
+
         <button
           @click="openModal()"
           class="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-xl shadow"
@@ -17,7 +25,7 @@
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div
           class="bg-white shadow-lg border border-emerald-200 rounded-2xl p-6 relative"
-          v-for="note in notes"
+          v-for="note in filteredNotes"
           :key="note.id"
         >
           <h2 class="text-xl font-semibold text-emerald-700 mb-2">📋 {{ note.title }}</h2>
@@ -73,13 +81,22 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 
 const notes = ref([])
+const searchQuery = ref('') // ✅ ตัวแปรเก็บคำค้นหา
 const showModal = ref(false)
 const isEditing = ref(false)
 const editId = ref(null)
 const form = ref({ title: '', content: '' })
+
+// ✅ computed สำหรับกรอง Note ตามคำค้นหา
+const filteredNotes = computed(() =>
+  notes.value.filter(n =>
+    n.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+    n.content.toLowerCase().includes(searchQuery.value.toLowerCase())
+  )
+)
 
 // Load from localStorage
 onMounted(() => {

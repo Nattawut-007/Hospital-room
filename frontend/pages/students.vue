@@ -36,6 +36,15 @@
           <button type="button" class="btn secondary" @click="resetForm" v-if="isEditing">ยกเลิก</button>
         </div>
       </form>
+
+      <!-- ✅ แถบค้นหา -->
+      <div class="search-box">
+        <input
+          v-model="searchQuery"
+          type="text"
+          placeholder="🔍 ค้นหาด้วยรหัส ชื่อ หรือ สาขา"
+        />
+      </div>
     </div>
 
     <!-- ตารางข้อมูล -->
@@ -51,7 +60,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="student in students" :key="student.studentId">
+        <tr v-for="student in filteredStudents" :key="student.studentId">
           <td>{{ student.studentId }}</td>
           <td>{{ student.name }}</td>
           <td>{{ student.age }}</td>
@@ -68,7 +77,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 
 const students = ref([])
 
@@ -79,6 +88,16 @@ const form = ref({
   major: '',
   year: null
 })
+
+const searchQuery = ref('') // ✅ เก็บคำค้นหา
+
+const filteredStudents = computed(() =>
+  students.value.filter(s =>
+    s.studentId.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+    s.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+    s.major.toLowerCase().includes(searchQuery.value.toLowerCase())
+  )
+)
 
 const isEditing = ref(false)
 let editingIndex = -1
@@ -160,6 +179,18 @@ input {
   width: 100%;
   padding: 8px 12px;
   border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.search-box {
+  margin-top: 15px;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #00bc7d;
   border-radius: 6px;
   font-size: 14px;
 }

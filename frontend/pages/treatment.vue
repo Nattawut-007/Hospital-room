@@ -31,13 +31,12 @@
         <div>
           <label class="block text-gray-700 font-medium mb-1">ค่าใช้จ่าย (บาท)</label>
           <input
-  type="text"
-  v-model="form.cost"
-  @input="onCostInput"
-  placeholder="ค่าใช้จ่าย"
-  class="w-full p-3 border rounded-lg focus:ring-emerald-400"
-/>
-
+            type="text"
+            v-model="form.cost"
+            @input="onCostInput"
+            placeholder="ค่าใช้จ่าย"
+            class="w-full p-3 border rounded-lg focus:ring-emerald-400"
+          />
         </div>
         <div class="md:col-span-2">
           <label class="block text-gray-700 font-medium mb-1">แผนการรักษา</label>
@@ -47,10 +46,20 @@
 
       <button
         @click="isEditing ? updateTreatment() : addTreatment()"
-        class="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-3 rounded-lg font-semibold mb-6"
+        class="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-3 rounded-lg font-semibold mb-4"
       >
         {{ isEditing ? 'อัปเดตข้อมูลการรักษา' : 'บันทึกข้อมูลการรักษา' }}
       </button>
+
+      <!-- ✅ ช่องค้นหา -->
+      <div class="mb-6">
+        <input
+          v-model="searchQuery"
+          type="text"
+          placeholder="🔍 ค้นหาด้วยชื่อผู้ป่วย / วินิจฉัยโรค / แพทย์"
+          class="w-full p-3 border rounded-lg focus:ring-emerald-400"
+        />
+      </div>
 
       <!-- Table -->
       <div v-if="treatmentList.length" class="overflow-x-auto">
@@ -68,7 +77,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(item, index) in treatmentList" :key="index" class="hover:bg-emerald-50">
+            <tr v-for="(item, index) in filteredTreatmentList" :key="index" class="hover:bg-emerald-50">
               <td class="px-4 py-2 border text-center">{{ index + 1 }}</td>
               <td class="px-4 py-2 border">{{ item.patient_name }}</td>
               <td class="px-4 py-2 border">{{ item.diagnosis }}</td>
@@ -92,20 +101,10 @@
       </p>
 
       <!-- Modal ใบเสร็จ -->
-      <div
-        v-if="showReceipt"
-        class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4"
-      >
+      <div v-if="showReceipt" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4">
         <div class="bg-white p-6 rounded shadow-lg max-w-md w-full relative print:p-0 print:shadow-none">
-          <button
-            class="absolute top-2 right-2 text-gray-600 hover:text-gray-800"
-            @click="closeReceipt"
-          >
-            ✖
-          </button>
-
+          <button class="absolute top-2 right-2 text-gray-600 hover:text-gray-800" @click="closeReceipt">✖</button>
           <h2 class="text-xl font-bold mb-4 text-center">ใบเสร็จรับเงิน</h2>
-
           <div class="mb-4">
             <p><strong>ชื่อผู้ป่วย:</strong> {{ currentReceipt.patient_name }}</p>
             <p><strong>วันที่รักษา:</strong> {{ currentReceipt.date }}</p>
@@ -114,23 +113,20 @@
             <p><strong>แผนการรักษา:</strong> {{ currentReceipt.treatment_plan }}</p>
             <p><strong>ค่าใช้จ่ายทั้งหมด:</strong> {{ currentReceipt.cost.toLocaleString() }} บาท</p>
           </div>
-
           <div class="text-center">
-            <button
-              @click="printReceipt"
-              class="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded"
-            >
+            <button @click="printReceipt" class="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded">
               พิมพ์ใบเสร็จ
             </button>
           </div>
         </div>
       </div>
+
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 
 const form = ref({
   patient_name: '',
@@ -145,6 +141,16 @@ const treatmentList = ref([])
 const isEditing = ref(false)
 const editIndex = ref(null)
 const message = ref('')
+
+const searchQuery = ref('') // ✅ เก็บคำค้นหา
+
+const filteredTreatmentList = computed(() =>
+  treatmentList.value.filter(item =>
+    item.patient_name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+    item.diagnosis.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+    item.doctor.toLowerCase().includes(searchQuery.value.toLowerCase())
+  )
+)
 
 const showReceipt = ref(false)
 const currentReceipt = ref({})
@@ -210,14 +216,9 @@ const closeReceipt = () => {
 }
 
 const printReceipt = () => {
-  // พิมพ์เฉพาะ modal ใบเสร็จ
   const originalTitle = document.title
   document.title = `ใบเสร็จรับเงิน_${currentReceipt.value.patient_name}_${currentReceipt.value.date}`
-
-  // ใช้ window.print() แสดง dialog พิมพ์
   window.print()
-
-  // คืนค่า title
   document.title = originalTitle
 }
 </script>
@@ -226,29 +227,16 @@ const printReceipt = () => {
 img {
   animation: pulse 3s infinite;
 }
-
 @keyframes pulse {
   0% { transform: scale(1); opacity: 1; }
   50% { transform: scale(1.05); opacity: 0.9; }
   100% { transform: scale(1); opacity: 1; }
 }
-
-/* ปรับ style สำหรับพิมพ์ใบเสร็จ */
 @media print {
-  body * {
-    visibility: hidden;
-  }
-  .print\:block, .print\:block * {
-    visibility: visible;
-  }
-  .print\:p-0 {
-    padding: 0 !important;
-  }
-  .print\:shadow-none {
-    box-shadow: none !important;
-  }
-  .fixed {
-    position: static !important;
-  }
+  body * { visibility: hidden; }
+  .print\:block, .print\:block * { visibility: visible; }
+  .print\:p-0 { padding: 0 !important; }
+  .print\:shadow-none { box-shadow: none !important; }
+  .fixed { position: static !important; }
 }
 </style>

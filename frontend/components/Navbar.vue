@@ -27,8 +27,16 @@
         to="/treatment"
         class="text-gray-600 hover:text-emerald-600 font-medium transition duration-200"
       >treatment</NuxtLink>
-      <NuxtLink to="/students">studens</NuxtLink>
 
+      <NuxtLink to="/students"
+      class="text-gray-600 hover:text-emerald-600 font-medium transition duration-200"
+      >studens</NuxtLink>
+
+      <!-- ✅ เพิ่มปุ่มค้นหาใบเสร็จ -->
+      <NuxtLink
+        to="/search-receipt"
+        class="text-gray-600 hover:text-emerald-600 font-medium transition duration-200"
+      >ค้นหาใบเสร็จ</NuxtLink>
     </div>
   </nav>
 </template>

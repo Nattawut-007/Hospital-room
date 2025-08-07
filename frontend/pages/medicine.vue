@@ -27,13 +27,26 @@
 
       <button
         @click="isEditing ? updateMedicine() : addMedicine()"
-        class="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-3 rounded-lg font-semibold mb-6"
+        class="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-3 rounded-lg font-semibold mb-4"
       >
         {{ isEditing ? 'อัปเดตข้อมูลยา' : 'บันทึกข้อมูลยา' }}
       </button>
 
+      <!-- ✅ แถบค้นหาแบบมีไอคอน -->
+      <div class="relative w-full mb-6">
+        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+          🔍
+        </span>
+        <input
+          v-model="searchQuery"
+          type="text"
+          placeholder="ค้นหาชื่อยา หรือ ประเภท"
+          class="w-full pl-10 pr-3 py-3 border rounded-lg focus:ring-emerald-400 focus:border-emerald-400"
+        />
+      </div>
+
       <!-- Table -->
-      <div v-if="medicineList.length" class="overflow-x-auto">
+      <div v-if="filteredMedicine.length" class="overflow-x-auto">
         <table class="w-full border table-auto text-sm">
           <thead class="bg-emerald-200 text-emerald-800">
             <tr>
@@ -45,7 +58,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(item, index) in medicineList" :key="index" class="hover:bg-emerald-50">
+            <tr v-for="(item, index) in filteredMedicine" :key="index" class="hover:bg-emerald-50">
               <td class="px-4 py-2 border text-center">{{ index + 1 }}</td>
               <td class="px-4 py-2 border">{{ item.name }}</td>
               <td class="px-4 py-2 border">{{ item.type }}</td>
@@ -67,7 +80,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 
 const form = ref({
   name: '',
@@ -76,9 +89,18 @@ const form = ref({
 })
 
 const medicineList = ref([])
+const searchQuery = ref('') // ✅ ตัวแปรเก็บคำค้นหา
 const isEditing = ref(false)
 const editIndex = ref(null)
 const message = ref('')
+
+// ✅ computed สำหรับกรองข้อมูลยา
+const filteredMedicine = computed(() =>
+  medicineList.value.filter(m =>
+    m.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+    m.type.toLowerCase().includes(searchQuery.value.toLowerCase())
+  )
+)
 
 const addMedicine = () => {
   if (form.value.name && form.value.type && form.value.quantity) {
