@@ -8,36 +8,27 @@
     </div>
 
     <div class="space-x-4">
-<<<<<<< HEAD
       <NuxtLink
         to="/login"
         class="text-gray-600 hover:text-emerald-600 font-medium transition duration-200"
-      >เข้าสู่ระบบ</NuxtLink>
+      >Login</NuxtLink>
 
       <NuxtLink
         to="/dashboard"
         class="text-gray-600 hover:text-emerald-600 font-medium transition duration-200"
-      >แดชบอร์ด</NuxtLink>
+      >Dashboard</NuxtLink>
 
       <NuxtLink
         to="/medicine"
         class="text-gray-600 hover:text-emerald-600 font-medium transition duration-200"
-      >ยา</NuxtLink>
-
-      <NuxtLink
-        to="/student"
-        class="text-gray-600 hover:text-emerald-600 font-medium transition duration-200"
-      >นักเรียน</NuxtLink>
+      >medicine</NuxtLink>
 
       <NuxtLink
         to="/treatment"
         class="text-gray-600 hover:text-emerald-600 font-medium transition duration-200"
-      >การรักษา</NuxtLink>
-=======
-      <NuxtLink to="/login">Login</NuxtLink>
-      <NuxtLink to="/Dashboard">Dashboard</NuxtLink>
+      >treatment</NuxtLink>
       <NuxtLink to="/students">studens</NuxtLink>
->>>>>>> 494269c (students)
+
     </div>
   </nav>
 </template>
