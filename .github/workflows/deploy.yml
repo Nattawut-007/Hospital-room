@@ -48,7 +48,7 @@ jobs:
         username: ${{ secrets.SERVER_USER }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          cd ~/007-daily-notes
+          cd ~/007-Hospital-Room
           docker pull nattawut007/flask-backend:latest
           docker pull nattawut007/nuxt-frontend:latest
           docker compose down
