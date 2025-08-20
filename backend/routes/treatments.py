@@ -144,3 +144,4 @@ def delete_treatment(id):
         return jsonify({'error': 'Treatment not found'}), 404
     treatment.delete()
     return jsonify({'msg': 'Treatment deleted', '_id': id}), 200
+#
