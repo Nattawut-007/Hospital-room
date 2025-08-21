@@ -10,7 +10,7 @@ export default defineNuxtConfig({
   vite: {
     plugins: [tailwindcss()],
     server: {
-      allowedHosts: ['localhost', '127.0.0.1', '192.168.10.118', 'lab.loeitech.org'],
+      allowedHosts: ['localhost', '127.0.0.1', '192.168.10.118', 'clinic.loeitech.org'],
     }
   },
 });
