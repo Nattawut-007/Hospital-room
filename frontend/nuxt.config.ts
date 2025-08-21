@@ -5,7 +5,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   css: ['~/assets/css/main.css'],
   /* app: {
-    baseURL: '/s07/'   
+    baseURL: '/s07/'   5555555
   }, */
   vite: {
     plugins: [tailwindcss()],
