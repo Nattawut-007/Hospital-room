@@ -87,16 +87,18 @@ const searchQuery = ref('')
 const message = ref('')
 
 const apiUrl = import.meta.env.VITE_API_URL
-const token = localStorage.getItem('token')
+const token = ref(null)
 
 const axiosInstance = axios.create({
   baseURL: apiUrl,
-  headers: {
-    Authorization: `Bearer ${token}`
-  }
+  // headers จะตั้งทีหลัง เมื่อได้ token แล้ว
 })
 
 onMounted(() => {
+  token.value = localStorage.getItem('token')
+  if (token.value) {
+    axiosInstance.defaults.headers.Authorization = `Bearer ${token.value}`
+  }
   fetchMedicines()
 })
 

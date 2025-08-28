@@ -104,12 +104,13 @@ const searchQuery = ref('')
 const message = ref('')
 const messageColor = ref('text-green-600')
 
-// ✅ axios instance
+// แก้ไขตรงนี้ โดยตรวจสอบว่าเป็น client หรือไม่ก่อนเรียก localStorage
+const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null
+
 const apiUrl = import.meta.env.VITE_API_URL
-const token = localStorage.getItem('token')
 const axiosInstance = axios.create({
   baseURL: apiUrl,
-  headers: { Authorization: `Bearer ${token}` }
+  headers: token ? { Authorization: `Bearer ${token}` } : {}
 })
 
 onMounted(() => {
