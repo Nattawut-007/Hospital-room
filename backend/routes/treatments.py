@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from models import Treatment, Student, Medicine
 from flask_jwt_extended import jwt_required
 from datetime import datetime
+from bson import ObjectId # เพิ่มบรรทัดนี้
 
 treatments = Blueprint('treatments', __name__)
 
@@ -104,10 +105,15 @@ def treatment_history(student_id):
 @jwt_required()
 def update_treatment(id):
     data = request.get_json() or {}
-    treatment = Treatment.objects(id=id).first()
+
+    # ตรวจสอบ ID ของ Treatment
+    if not ObjectId.is_valid(id):
+        return jsonify({'error': 'Invalid treatment ID format'}), 400
+
+    treatment = Treatment.objects(id=ObjectId(id)).first()
     if not treatment:
         return jsonify({'error': 'Treatment not found'}), 404
-        
+
     if 'student_id' in data:
         student = Student.objects(student_id=data['student_id']).first()
         if not student:
@@ -120,7 +126,11 @@ def update_treatment(id):
     if 'medicine_ids' in data:
         medicine_objs = []
         for mid in data['medicine_ids']:
-            med = Medicine.objects(id=mid).first()
+            # ตรวจสอบ ID ของยา
+            if not ObjectId.is_valid(mid):
+                return jsonify({'error': f'Invalid medicine ID format: {mid}'}), 400
+
+            med = Medicine.objects(id=ObjectId(mid)).first()
             if not med:
                 return jsonify({'error': f'Medicine with id {mid} not found'}), 400
             medicine_objs.append(med)
@@ -131,12 +141,12 @@ def update_treatment(id):
             treatment.date = datetime.fromisoformat(data['date'])
         except Exception:
             return jsonify({'error': 'Invalid date format'}), 400
-    
+
     treatment.save()
     return jsonify(treatment_to_dict(treatment)), 200
 
 # ✅ ลบการรักษาตาม id (delete)
-@treatments.route('/treatments/<id>', methods=['DELETE'])
+@treatments.route('/treatments/<_id>', methods=['DELETE'])
 @jwt_required()
 def delete_treatment(id):
     treatment = Treatment.objects(id=id).first()
