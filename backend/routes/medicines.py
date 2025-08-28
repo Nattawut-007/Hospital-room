@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from models import Medicine
+from mongoengine import ValidationError
 from flask_jwt_extended import jwt_required
 
 medicines = Blueprint('medicines', __name__)
@@ -23,11 +24,15 @@ def get_medicines():
 @medicines.route('/medicines', methods=['POST'])
 @jwt_required()
 def create_medicine():
-    data = request.get_json() or {}
-    # ป้องกัน field แปลก ๆ หลุดเข้าโมเดล
-    allowed = {k: data[k] for k in ('name', 'brand', 'stock') if k in data}
-    medicine = Medicine(**allowed).save()
-    return jsonify(med_to_dict(medicine)), 201
+    try:
+        data = request.get_json() or {}
+        allowed = {k: data[k] for k in ('name', 'brand', 'stock') if k in data}
+        medicine = Medicine(**allowed).save()
+        return jsonify(med_to_dict(medicine)), 201
+    except ValidationError as ve:
+        return jsonify({"error": ve.to_dict()}), 400
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 # ✅ แก้ไขยา (update)
 @medicines.route('/medicines/<id>', methods=['PUT'])

@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from models import Treatment, Student, Medicine
 from flask_jwt_extended import jwt_required
+from mongoengine import ValidationError
 from datetime import datetime
 
 treatments = Blueprint('treatments', __name__)
@@ -34,27 +35,31 @@ def get_treatments():
 @treatments.route('/treatments', methods=['POST'])
 @jwt_required()
 def create_treatment():
-    data = request.get_json() or {}
-    student = Student.objects(student_id=data.get('student_id')).first()
-    if not student:
-        return jsonify({'error': 'Student not found'}), 400
+    try:
+        data = request.get_json() or {}
+        student = Student.objects(student_id=data.get('student_id')).first()
+        if not student:
+            return jsonify({'error': 'Student not found'}), 400
 
-    medicine_ids = data.get('medicine_ids', [])
-    medicine_objs = []
-    for mid in medicine_ids:
-        med = Medicine.objects(id=mid).first()
-        if not med:
-            return jsonify({'error': f'Medicine with id {mid} not found'}), 400
-        medicine_objs.append(med)
+        medicine_objs = []
+        for mid in data.get('medicine_ids', []):
+            med = Medicine.objects(id=mid).first()
+            if not med:
+                return jsonify({'error': f'Medicine with id {mid} not found'}), 400
+            medicine_objs.append(med)
 
-    treatment = Treatment(
-        student=student,
-        symptoms=data.get('symptoms', ''),
-        medicines=medicine_objs,
-        date=datetime.utcnow()
-    ).save()
-    
-    return jsonify(treatment_to_dict(treatment)), 201
+        treatment = Treatment(
+            student=student,
+            symptoms=data.get('symptoms', ''),
+            medicines=medicine_objs,
+            date=datetime.utcnow()
+        ).save()
+
+        return jsonify(treatment_to_dict(treatment)), 201
+    except ValidationError as ve:
+        return jsonify({"error": ve.to_dict()}), 400
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 # ✅ ค้นหาจากนักเรียนที่ได้รับการรักษา (distinct list)
 @treatments.route('/treated_students', methods=['GET'])
