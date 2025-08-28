@@ -11,4 +11,4 @@
 defineProps({ note: Object })
 defineEmits(['delete'])
 </script>
-#
+##########
