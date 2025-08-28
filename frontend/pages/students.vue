@@ -97,19 +97,22 @@ const searchQuery = ref('')
 const message = ref('')
 const messageColor = ref('text-green-600')
 
-// ✅ axios instance
+// ✅ axios instance (สร้างก่อน แต่ยังไม่ตั้ง header)
 const apiUrl = import.meta.env.VITE_API_URL
-const token = localStorage.getItem('token')
 const axiosInstance = axios.create({
   baseURL: apiUrl,
-  headers: {
-    Authorization: `Bearer ${token}`
-  }
 })
 
-// ✅ โหลดข้อมูลเมื่อเริ่มต้น
-onMounted(fetchStudents)
+// โหลด token จาก localStorage ใน onMounted และตั้ง header ให้ axiosInstance หลังจากนั้นโหลดข้อมูล
+onMounted(() => {
+  const token = localStorage.getItem('token')
+  if (token) {
+    axiosInstance.defaults.headers.Authorization = `Bearer ${token}`
+  }
+  fetchStudents()
+})
 
+// ฟังก์ชันโหลดข้อมูลนักเรียน
 async function fetchStudents() {
   try {
     const res = await axiosInstance.get('/api/students')

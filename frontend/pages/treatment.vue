@@ -104,12 +104,13 @@ const searchQuery = ref('')
 const message = ref('')
 const messageColor = ref('text-green-600')
 
-// ✅ axios instance
+// แก้ไขตรงนี้ โดยตรวจสอบว่าเป็น client หรือไม่ก่อนเรียก localStorage
+const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null
+
 const apiUrl = import.meta.env.VITE_API_URL
-const token = localStorage.getItem('token')
 const axiosInstance = axios.create({
   baseURL: apiUrl,
-  headers: { Authorization: `Bearer ${token}` }
+  headers: token ? { Authorization: `Bearer ${token}` } : {}
 })
 
 onMounted(() => {
@@ -153,23 +154,32 @@ function editTreatment(t) {
   form.value = {
     student_id: t.student.student_id,
     symptoms: t.symptoms,
-    medicine_ids: t.medicines.map(m => m.id)
+    // ✅ แก้ไขตรงนี้: ใช้ m._id แทน m.id
+    medicine_ids: t.medicines.map(m => m._id)
   }
-  editId.value = t.id
+  editId.value = t._id // ✅ แก้ไขตรงนี้: ใช้ t._id แทน t.id
   isEditing.value = true
   message.value = ''
 }
 
 async function updateTreatment() {
   try {
+    // ✅ แก้ไขตรงนี้: ตรวจสอบให้แน่ใจว่า editId.value มีค่าถูกต้อง
+    console.log("Updating with ID:", editId.value);
     await axiosInstance.put(`/api/treatments/${editId.value}`, form.value)
     message.value = '✅ อัปเดตข้อมูลการรักษาสำเร็จ'
     messageColor.value = 'text-green-600'
     await fetchTreatments()
     resetForm()
   } catch (err) {
-    message.value = '❌ อัปเดตไม่สำเร็จ'
+    // โค้ดจัดการ Error
+    if (err.response && err.response.status === 400) {
+      message.value = `❌ อัปเดตไม่สำเร็จ: ${err.response.data.error}`
+    } else {
+      message.value = '❌ อัปเดตไม่สำเร็จ'
+    }
     messageColor.value = 'text-red-600'
+    console.error(err)
   }
 }
 

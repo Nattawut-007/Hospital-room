@@ -15,7 +15,7 @@ services:
     build:
       context: ./frontend
       args:
-        VITE_API_URL: ${VITE_API_URL}   # << ดึงจาก .env ภายนอก
+        VITE_API_URL: ${VITE_API_URL}   # << ดึงจาก .env ภายนอกfffff
     container_name: 007-nuxt-frontend
     env_file:
       - ./frontend/.env                # ใช้ตอน runtime
