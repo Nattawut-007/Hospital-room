@@ -37,6 +37,10 @@
         to="/search-receipt"
         class="text-gray-600 hover:text-emerald-600 font-medium transition duration-200"
       >ค้นหาใบเสร็จ</NuxtLink>
+      <NuxtLink
+        to="/about"
+        class="text-gray-600 hover:text-emerald-600 font-medium transition duration-200"
+      >About</NuxtLink>
     </div>
   </nav>
 </template>
