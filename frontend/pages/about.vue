@@ -26,24 +26,24 @@
 <script setup>
 const team = [
   {
-    name: 'Pond',
+    name: 'ณัฐวุฒิ จันทิหล้า (ป้อน)',
     role: 'Backend Developer',
-    image: 'https://media.discordapp.net/attachments/1032668625905143809/1413441117705207838/att.rZVh63iZSk4UKdI9jALGItLcqAjC98ZIPvt44AguVds.jpg?ex=68bbf11e&is=68ba9f9e&hm=ee45887fb6de05883dff8f0314cc003cc1de0ae33d3e663937a330b45ed2cd1b&=&format=webp&width=800&height=800',
+    image: 'https://media.discordapp.net/attachments/1032668625905143809/1415676607888232508/att.rZVh63iZSk4UKdI9jALGItLcqAjC98ZIPvt44AguVds.jpg?ex=68c41315&is=68c2c195&hm=c0c766b192866ad5a8f87147015ce1407556a36a418ca75d7c5549e742a52e2e&=&format=webp&width=800&height=800',
   },
   {
-    name: 'Boat',
+    name: 'บารมี แคภูเขียว (โบ๊ท)',
     role: 'Backend Developer',
-    image: 'https://media.discordapp.net/attachments/1032668625905143809/1413443406465859655/8c83e940ed093cbdd782b4c2c8951261.jpg?ex=68bbf340&is=68baa1c0&hm=f8b6a8818ac734a76babd1177656d59654aa55d050f08042dd4ca2b98a9a1f97&=&format=webp&width=930&height=930',
+    image: 'https://media.discordapp.net/attachments/1032668625905143809/1415676608425230476/8c83e940ed093cbdd782b4c2c8951261.jpg?ex=68c41315&is=68c2c195&hm=e16e6f12a31f9aa210de7521d6fad54e6def0606196732d2d826c367914d6882&=&format=webp&width=800&height=800',
   },
   {
-    name: 'Job',
+    name: 'นัฐวุฒน์ อุทธตรี (จ๊อบ)',
     role: 'Frontend Developer',
-    image: 'https://media.discordapp.net/attachments/1032668625905143809/1413441117952802858/att.fYOJ1vEqaJaVZzPjC382wicH7-eJxdQqxy0gEytrCmg.jpg?ex=68bbf11e&is=68ba9f9e&hm=f13e60aea239dafc3a638daf6f1f74cbf6beed6f451fbcec39e68833faf64120&=&format=webp&width=800&height=800',
+    image: 'https://media.discordapp.net/attachments/1032668625905143809/1415676602091573248/att.fYOJ1vEqaJaVZzPjC382wicH7-eJxdQqxy0gEytrCmg.jpg?ex=68c41313&is=68c2c193&hm=ac03f452ded4cc313473a5e099cb553e036f4d5bc4299892d752589ec0f2c7d7&=&format=webp&width=800&height=800',
   },
   {
-    name: 'Kim',
+    name: 'คิมหันต์ ละดาห์ (คิม)',
     role: 'Frontend Developer',
-    image: 'https://media.discordapp.net/attachments/1032668625905143809/1413441118200139856/IMG_9520.png?ex=68bbf11f&is=68ba9f9f&hm=6b0dfca58737684daab985bf0d7e325a9eb44da5f3dd8e3fd428128803213a83&=&format=webp&quality=lossless&width=568&height=568',
+    image: 'https://media.discordapp.net/attachments/1032668625905143809/1415676601399775262/IMG_9520.png?ex=68c41313&is=68c2c193&hm=d38891e4f1c472ae78672fee53e8aa6f3e8d328f866094ebe38f059455612ed6&=&format=webp&quality=lossless&width=568&height=568',
   },
 ]
 </script>
